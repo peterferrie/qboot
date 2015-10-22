@@ -1,0 +1,10 @@
+- targets multi-loaders in ProDOS order
+- load from any slot
+- scatter-reads sectors
+- sector-level read, can start and end anywhere in a track
+- can perform full-track read in one revolution
+- no zpage usage after init
+- only 2 bytes overhead per read
+- can load up to $bc sectors at a time ($0100-bcff)
+- DOS 3.3 Launcher compatible
+- requires only 3 pages in memory
