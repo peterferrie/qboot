@@ -93,7 +93,6 @@ indextbl        ;the 0 also terminates the patchtbl list!
         sta     preshift-$16, y
 +       dey
         bne     --
-        sty     curtrk+1
 
         ;construct 2-bit group table
 
@@ -331,7 +330,7 @@ seek
         sta     step+1
 copy_cur
 curtrk
-        lda     #$d1
+        lda     #0
         sta     tmpval+1
         sec
 phase
