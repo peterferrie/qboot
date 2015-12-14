@@ -9,7 +9,11 @@
         firstsec  = $d1         ;user-defined, first sector to read
         address   = $d1         ;user-defined
         entry     = $d1d1       ;user-defined
+        zpread    = 0           ;set to 1 to allow reading into zero page
+                                ;relies on memory wraparound, not supported on IIGS
+                                ;also precludes reading to page $FF
         stkread   = 0           ;set to 1 to allow reading into stack page
+                                ;but remember about the 6 bytes of stack
         seekback  = 0           ;set to 1 to enable seek backwards
         version   = 1
 
@@ -177,10 +181,15 @@ inittrk
 
 startsec
         ldy     #$d1
+!if zpread {
+        inc     tmpadr+1
+}
 tmpadr
 -       lda     #$d1
         sta     addrtbl, y
+!if !zpread {
         inc     tmpadr+1
+}
         iny
         dec     partial1
         bne     -
@@ -211,20 +220,29 @@ read
         ldx     addrtbl, y      ;fetch corresponding address
         beq     read
         sta     sector+1        ;store index for later
+!if zpread {
+        stx     adrpatchx6+2
+        dex
+}
         stx     adrpatchx5+2
         stx     adrpatch6+2
         stx     adrpatchx1+2
         stx     adrpatchx2+2
         stx     adrpatchx3+2
         stx     adrpatchx4+2
+!if !zpread {
         inx
         stx     adrpatchx6+2
         dex
+}
         dex
         stx     adrpatch3+2
         stx     adrpatch5+2
 !if stkread {
         inx
+    !if zpread {
+        inx
+    }
 }
         ldy     #$fe
 adrpatchx5

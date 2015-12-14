@@ -5,6 +5,7 @@
 - can perform full-track read in one revolution
 - no zpage usage after init, and only 6 bytes of stack
 - only 2 bytes overhead per read
-- can load up to $bc sectors at a time ($0100-bcff)
+- can load up to $bd sectors at a time ($0000-bcff)
+  (or $c0 sectors if run from banked ROM)
 - DOS 3.3 Launcher compatible
 - requires only 3 pages in memory
