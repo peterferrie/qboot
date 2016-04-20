@@ -1,5 +1,5 @@
 ;fast seek/multi-read
-;copyright (c) Peter Ferrie 2015
+;copyright (c) Peter Ferrie 2015-16
 ;assemble using ACME
 !cpu 6502
 !to "qboot",plain
@@ -67,6 +67,10 @@
         ldy     #$7f
         bne     +               ;branch always
 *=$839
+        lda     #>(entry-1)
+        pha
+        lda     #<(entry-1)
+        pha
         jsr     preread
         jmp     $bf00           ;DOS 3.3 launcher entrypoint
 
@@ -122,28 +126,42 @@ indextbl        ;the 0 also terminates the patchtbl list!
         iny
         cpy     #3
         bcc     --
-
-preread
-
         lda     #>(entry-1)
         pha
         lda     #<(entry-1)
         pha
+        jsr     preread
+
+!if seekback { ;no room to do this in the routine
+        sty     startsec+1
+        sta     tmpadr+1
+        stx     total+1
+}
+        jmp     seekread
+
+preread
 
 ;copy post-read if necessary
 ;push post-read address here
+;        pla
+;        tax
+;        pla
+;        tay
+;        lda     #>(postread-1)
+;        pha
+;        lda     #<(postread-1)
+;        pha
+;        tya
+;        pha
+;        txa
+;        pha
 
         lda     #<(firsttrk*2)
         sta     phase+1
         ldx     #sectors
-        ldy     #address
-        lda     #firstsec
-!if seekback { ;no room to do this in the routine
-        sta     startsec+1
-        stx     total+1
-        sty     tmpadr+1
-}
-        jmp     seekread
+        lda     #address
+        ldy     #firstsec
+        rts
 
 *=$8fe
         !byte   $be, 1
@@ -163,9 +181,9 @@ slotpatch1
 
 seekread
 !if seekback=0 {
-        sta     startsec+1
+        sty     startsec+1
+        sta     tmpadr+1
         stx     total+1
-        sty     tmpadr+1
 }
 
 inittrk
