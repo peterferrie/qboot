@@ -239,23 +239,23 @@ read
         beq     read
         sta     sector+1        ;store index for later
 !if zpread {
-        stx     adrpatchx6+2
+        stx     adrpatch9+2
         dex
 }
-        stx     adrpatchx5+2
-        stx     adrpatch6+2
-        stx     adrpatchx1+2
-        stx     adrpatchx2+2
-        stx     adrpatchx3+2
-        stx     adrpatchx4+2
-!if !zpread {
-        inx
-        stx     adrpatchx6+2
-        dex
-}
-        dex
+        stx     adrpatch1+2
+        stx     adrpatch8+2
+        stx     adrpatch2+2
         stx     adrpatch3+2
         stx     adrpatch5+2
+        stx     adrpatch7+2
+!if !zpread {
+        inx
+        stx     adrpatch9+2
+        dex
+}
+        dex
+        stx     adrpatch4+2
+        stx     adrpatch6+2
 !if stkread {
         inx
     !if zpread {
@@ -263,7 +263,7 @@ read
     }
 }
         ldy     #$fe
-adrpatchx5
+adrpatch1
 -       lda     $d102, y
         pha
         iny
@@ -280,7 +280,7 @@ slotpatch2
 -       ldx     $c0d1
         bpl     -
         lda     preshift-$96, x
-adrpatchx1
+adrpatch2
         sta     $d102, y         ;store 2-bit array
 
 tmpval
@@ -292,10 +292,10 @@ slotpatch3
 -       ldx     $c0d1
         bpl     -
         eor     preshift-$96, x
-adrpatchx2
+adrpatch3
         ldx     $d102, y        ;bit2tbl
         eor     grouped+2, x    ;first 86 nibbles use group bits 0-1
-adrpatch3
+adrpatch4
         sta     $d156, y
         iny
         bne     -
@@ -305,10 +305,10 @@ slotpatch4
 -       ldx     $c0d1
         bpl     -
         eor     preshift-$96, x
-adrpatchx3
+adrpatch5
         ldx     $d102, y        ;bit2tbl
         eor     grouped+1, x    ;second 86 nibbles use group bits 2-3
-adrpatch5
+adrpatch6
         sta     $d1ac, y
         iny
         bne     -
@@ -318,10 +318,10 @@ slotpatch5
 -       ldy     $c0d1
         bpl     -
         eor     preshift-$96, y
-adrpatchx4
+adrpatch7
         ldy     $d100, x        ;bit2tbl
         eor     grouped, y      ;last 84 nibbles use group bits 4-5
-adrpatch6
+adrpatch8
         sta     $d100, x
         inx
         bne     -
@@ -333,7 +333,7 @@ slotpatch6
         cmp     #1              ;carry = !zero
         ldy     #1
 -       pla
-adrpatchx6
+adrpatch9
         sta     $d100, y
         dey
         bpl     -
