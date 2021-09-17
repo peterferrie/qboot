@@ -25,6 +25,7 @@ index   ldy     #0
         inc     track
 +       inc     address
         bcc     +
+        !byte   $d1
 phase   !byte   $d1 ;set by bootsector if qboot loaded to $be00
 +       dec     sectors
         bne     -
